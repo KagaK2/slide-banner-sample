@@ -3,39 +3,34 @@ import BannerItem from "./BannerItem";
 import styles from "./styles/Banner.module.scss";
 
 const Banner = () => {
-  const newArray = ["1", "2", "3", "4", "5", "6", "7"];
-  const moveBanner = () => {
-    let startTime = Date.now();
-    let selectedBanner: HTMLElement | null = document.querySelector("#moving-banner");
-    let leftBanner: HTMLElement | null = document.querySelector('#moving-banner-left')
+  let newArray: Array<string | undefined> = ["1","2","3","1", "2", "3","1", "2", "3"];
+  const moveBannerItem = (id: string | undefined, index: number) => {
+    let currentPosition =  100/(newArray.length/3)*(Number(index)-4);
+    let selectedBannerItem: HTMLElement | null = document.querySelector(`#i${index}`);
     let timer = requestAnimationFrame(function animateBanner(timeStamp) {
-      let interval = Date.now() - startTime;
-      if (interval / 4 >= window.innerWidth){
-        let tempBanner = selectedBanner;
-        selectedBanner = leftBanner;
-        leftBanner = tempBanner;
-        startTime = Date.now();
-        interval = Date.now() - startTime;
+      currentPosition += 0.1;
+      if(currentPosition >= 200){
+        currentPosition = -100;
       }
-      leftBanner!.style.right = (window.innerWidth- interval / 4) + "px"
-      selectedBanner!.style.left = interval / 4 + "px";
+      selectedBannerItem!.style.left = currentPosition + "%";
       requestAnimationFrame(animateBanner);
     });
   };
   useEffect(() => {
-    moveBanner();
+    const movingInitialization = () => {
+      newArray.forEach((item,index) => moveBannerItem(item, index))
+    }
+    movingInitialization();
   }, []);
 
   return (
     <div id="banner" className={styles["banner__wrapper"]}>
-        <div id="moving-banner-left" className={styles["banner__moving"]}>
-        {newArray.map((item: string) => (
-          <BannerItem content={item} />
-        ))}
-      </div>
       <div id="moving-banner" className={styles["banner__moving"]}>
-        {newArray.map((item: string) => (
-          <BannerItem content={item} />
+        {newArray.map((item: string | undefined, index: number) => (
+          <div id={`i${index}`} style={{position: 'absolute'}}>
+            <BannerItem content={item}/>
+          </div>
+          
         ))}
       </div>
     </div>
@@ -43,3 +38,9 @@ const Banner = () => {
 };
 
 export default Banner;
+// [1,2,3,4,5,6,7]
+// When Right touch the screen, duplicate the last item into the first place
+// [7,1,2,3,4,5,6,7]
+// [7,1,2,3,4,5,6]
+// Repeat
+// [6,7,1,2,3,4,5,6]

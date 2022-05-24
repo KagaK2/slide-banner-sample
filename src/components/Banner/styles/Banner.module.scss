@@ -1,10 +1,11 @@
 .banner__wrapper {
     display: flex;
-    flex-wrap: nowrap;
-    position: relative;
+    
 }
 .banner__moving {
     display: flex;
     flex-wrap: nowrap;
-    position: absolute;
+    position: relative;
+    width: 100%;
+    overflow-x: clip;
 }
